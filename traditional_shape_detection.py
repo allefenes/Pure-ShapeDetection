@@ -3,14 +3,8 @@ import numpy as np
 
 def detect_shapes(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-    # Gauss filtresi uyguladım
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-    
-    # Adaptif eşikleme uyguladım
     thresholded = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 2)
-    
-    # Kernel oluşturup önce aşındırdım sonra genişlettim
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
     eroded = cv2.erode(thresholded, kernel, iterations=1)
     dilated = cv2.dilate(eroded, kernel, iterations=1)
@@ -20,7 +14,6 @@ def detect_shapes(image):
 
     for contour in contours:
         area = cv2.contourArea(contour)
-        #Bu area değeri 100 den büyük olanları içeriyordu 3000 yaptım ki arkaplandaki vs nesneleride anlamlandırmasın.
         if area > 3000:     
             perimeter = cv2.arcLength(contour, True)
             approx = cv2.approxPolyDP(contour, 0.03 * perimeter, True)
